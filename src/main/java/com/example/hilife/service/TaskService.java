@@ -60,4 +60,48 @@ public class TaskService {
 
         return response;
     }
+
+    public Task updateTask(
+            Long id,
+            Task updatedTask
+    ) {
+
+        Task existingTask = taskRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Task not found"
+                        ));
+
+        existingTask.setTitle(
+                updatedTask.getTitle()
+        );
+
+        existingTask.setDescription(
+                updatedTask.getDescription()
+        );
+
+        existingTask.setVendor(
+                updatedTask.getVendor()
+        );
+
+        existingTask.setStartDate(
+                updatedTask.getStartDate()
+        );
+
+        existingTask.setExpectedCompletionDate(
+                updatedTask.getExpectedCompletionDate()
+        );
+
+        existingTask.setCurrentStatus(
+                updatedTask.getCurrentStatus()
+        );
+
+        existingTask.setProgressPercentage(
+                updatedTask.getProgressPercentage()
+        );
+
+        return taskRepository.save(
+                existingTask
+        );
+    }
 }

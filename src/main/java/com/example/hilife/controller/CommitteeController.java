@@ -39,6 +39,17 @@ public class CommitteeController {
                 .getCommitteeMemberById(id);
     }
 
+    @PutMapping("/{committeeId}/photo/{photoId}")
+    public CommitteeResponse updatePhoto(
+            @PathVariable Long committeeId,
+            @PathVariable Long photoId
+    ) {
+        return committeeService.updatePhoto(
+                committeeId,
+                photoId
+        );
+    }
+
     @DeleteMapping("/{id}")
     public void deleteCommitteeMember(
             @PathVariable Long id) {

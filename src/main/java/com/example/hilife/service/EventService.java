@@ -57,11 +57,28 @@ public class EventService {
         return response;
     }
 
+    public Event updateEvent(Long id, Event updatedEvent) {
+
+        Event existingEvent = eventRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Event not found"));
+
+        existingEvent.setTitle(updatedEvent.getTitle());
+        existingEvent.setDescription(updatedEvent.getDescription());
+//        existingEvent.setVenue(updatedEvent.getVenue());
+        existingEvent.setStartTime(updatedEvent.getStartTime());
+        existingEvent.setEndTime(updatedEvent.getEndTime());
+//        existingEvent.setCategory(updatedEvent.getCategory());
+
+        return eventRepository.save(existingEvent);
+    }
 
     public void deleteEvent(Long id) {
-        if (!eventRepository.existsById(id)) {
-            throw new EventNotFoundException("Event not found with id: " + id);
-        }
-        eventRepository.deleteById(id);
+
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Event not found"));
+
+        eventRepository.delete(event);
     }
 }

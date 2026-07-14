@@ -2,10 +2,14 @@ package com.example.hilife.dto;
 
 import com.example.hilife.entity.Feedback;
 import com.example.hilife.entity.Gallery;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+
 public class FeedbackResponse {
+
 
     private Feedback feedback;
     private List<Gallery> photos;

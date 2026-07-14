@@ -22,30 +22,56 @@ public class CommitteeService{
     private final UserRepository userRepository;
     private final GalleryRepository galleryRepository;
 
+//    public CommitteeResponse createCommitteeMember(CommitteeRequest request) {
+//
+//        AppUser user = userRepository.findById(
+//                        request.getUserId())
+//                .orElseThrow(() ->
+//                        new RuntimeException("User not found"));
+//
+//        Gallery photo = galleryRepository.findById(
+//                        request.getPhotoId())
+//                .orElseThrow(() ->
+//                        new RuntimeException("Photo not found"));
+//
+//        Committee committee = new Committee();
+//
+//        committee.setPosition(request.getPosition());
+//        committee.setUser(user);
+//        committee.setPhoto(photo);
+//
+//        Committee savedCommittee =
+//                committeeRepository.save(committee);
+//
+//        return mapToResponse(savedCommittee);
+//    }
+
     public CommitteeResponse createCommitteeMember(CommitteeRequest request) {
 
-        AppUser user = userRepository.findById(
-                        request.getUserId())
+        AppUser user = userRepository.findById(request.getUserId())
                 .orElseThrow(() ->
                         new RuntimeException("User not found"));
-
-        Gallery photo = galleryRepository.findById(
-                        request.getPhotoId())
-                .orElseThrow(() ->
-                        new RuntimeException("Photo not found"));
 
         Committee committee = new Committee();
 
         committee.setPosition(request.getPosition());
         committee.setUser(user);
-        committee.setPhoto(photo);
+
+        // Photo is optional
+        if (request.getPhotoId() != null) {
+
+            Gallery photo = galleryRepository.findById(request.getPhotoId())
+                    .orElseThrow(() ->
+                            new RuntimeException("Photo not found"));
+
+            committee.setPhoto(photo);
+        }
 
         Committee savedCommittee =
                 committeeRepository.save(committee);
 
         return mapToResponse(savedCommittee);
     }
-
     public List<CommitteeResponse> getAllCommitteeMembers() {
 
         return committeeRepository.findAll()
@@ -65,6 +91,29 @@ public class CommitteeService{
         return mapToResponse(committee);
     }
 
+    public CommitteeResponse updatePhoto(
+            Long committeeId,
+            Long photoId
+    ) {
+
+        Committee committee =
+                committeeRepository.findById(committeeId)
+                        .orElseThrow(() ->
+                                new RuntimeException("Committee member not found"));
+
+        Gallery gallery =
+                galleryRepository.findById(photoId)
+                        .orElseThrow(() ->
+                                new RuntimeException("Photo not found"));
+
+        committee.setPhoto(gallery);
+
+        Committee saved =
+                committeeRepository.save(committee);
+
+        return mapToResponse(saved);
+    }
+
     public void deleteCommitteeMember(Long id) {
 
         committeeRepository.deleteById(id);
@@ -73,19 +122,28 @@ public class CommitteeService{
     private CommitteeResponse mapToResponse(
             Committee committee) {
 
-        return CommitteeResponse.builder()
-                .id(committee.getId())
-                .position(committee.getPosition())
+        CommitteeResponse.CommitteeResponseBuilder builder =
+                CommitteeResponse.builder()
+                        .id(committee.getId())
+                        .position(committee.getPosition())
+                        .userId(committee.getUser().getId())
+                        .userName(committee.getUser().getName())
+                        .contactNumber(committee.getUser().getPhoneNumber())
+                        .tower(committee.getUser().getTower())
+                .flatNumber(committee.getUser().getFlatNumber())
+                .role(committee.getUser().getRole().name());
 
-                .userId(committee.getUser().getId())
-                .userName(committee.getUser().getName())
-                .contactNumber(
-                        committee.getUser().getPhoneNumber())
+        if (committee.getPhoto() != null) {
 
-                .photoId(committee.getPhoto().getId())
-                .photoUrl(
-                        committee.getPhoto().getImageUrl())
+            builder.photoId(
+                    committee.getPhoto().getId()
+            );
 
-                .build();
+            builder.photoUrl(
+                    committee.getPhoto().getImageUrl()
+            );
+        }
+
+        return builder.build();
     }
 }

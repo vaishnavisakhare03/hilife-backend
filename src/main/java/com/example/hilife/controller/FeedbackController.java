@@ -1,5 +1,6 @@
 package com.example.hilife.controller;
 
+import com.example.hilife.dto.ReactionRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,9 +49,32 @@ public class FeedbackController {
         return "Photos added successfully";
     }
 
+    @PostMapping("/{id}/like")
+    public Feedback likeFeedback(
+            @PathVariable Long id
+    ) {
+        return feedbackService.likeFeedback(id);
+    }
+    @PostMapping("/{id}/dislike")
+    public Feedback dislikeFeedback(
+            @PathVariable Long id
+    ) {
+        return feedbackService.dislikeFeedback(id);
+    }
     @DeleteMapping("/{id}")
     public String deleteFeedback(@PathVariable Long id) {
         feedbackService.deleteFeedback(id);
         return "Feedback deleted successfully";
+    }
+
+    @PutMapping("/{id}")
+    public Feedback updateFeedback(
+            @PathVariable Long id,
+            @RequestBody Feedback feedback
+    ) {
+        return feedbackService.updateFeedback(
+                id,
+                feedback
+        );
     }
 }

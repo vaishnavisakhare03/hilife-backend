@@ -48,9 +48,20 @@ public class EventController {
         return eventService.getEventWithPhotos(id);
     }
 
+    @PutMapping("/{id}")
+    public Event updateEvent(
+            @PathVariable Long id,
+            @RequestBody Event event
+    ) {
+        return eventService.updateEvent(id, event);
+    }
+
     @DeleteMapping("/{id}")
     public String deleteEvent(@PathVariable Long id) {
+
         eventService.deleteEvent(id);
+
         return "Event deleted successfully";
     }
+
 }

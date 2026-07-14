@@ -25,6 +25,9 @@ public class Feedback {
     @Column(name = "posted_by", length = 100)
     private String postedBy;
 
+    @Column(name = "posted_by_user_id")
+    private Long postedByUserId;
+
     @Column(name = "likes_count")
     private Integer likesCount = 0;
 
