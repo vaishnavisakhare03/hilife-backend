@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -46,5 +47,20 @@ public class S3Service {
                 region,
                 fileName
         );
+    }
+
+    public void deleteFile(String imageUrl) {
+
+        String key = imageUrl.substring(
+                imageUrl.lastIndexOf("/") + 1
+        );
+
+        DeleteObjectRequest request =
+                DeleteObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(key)
+                        .build();
+
+        s3Client.deleteObject(request);
     }
 }

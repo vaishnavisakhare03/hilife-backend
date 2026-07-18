@@ -47,4 +47,17 @@ public class GalleryService {
 
         galleryRepository.save(gallery);
     }
+
+    public void deleteImage(Long galleryId) {
+
+        Gallery gallery = galleryRepository.findById(galleryId)
+                .orElseThrow(() ->
+                        new RuntimeException("Image not found"));
+
+        s3Service.deleteFile(
+                gallery.getImageUrl()
+        );
+
+        galleryRepository.delete(gallery);
+    }
 }

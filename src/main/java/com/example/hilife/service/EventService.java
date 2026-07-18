@@ -23,10 +23,30 @@ public class EventService {
         return eventRepository.save(event);
     }
 
-    public List<Event> getAllEvents() {
-        return eventRepository.findAll();
-    }
+    public List<EventResponse> getAllEvents() {
 
+        List<Event> events = eventRepository.findAll();
+
+        return events.stream()
+                .map(event -> {
+
+                    EventResponse response = new EventResponse();
+
+                    response.setEvent(event);
+
+                    response.setPhotos(
+                            galleryRepository
+                                    .findByEntityTypeAndParentEntityId(
+                                            "EVENT",
+                                            event.getId()
+                                    )
+                    );
+
+                    return response;
+
+                })
+                .toList();
+    }
     public Event getEventById(Long id) {
         return eventRepository.findById(id)
                 .orElseThrow(() -> new EventNotFoundException("Event not found with id: " + id));

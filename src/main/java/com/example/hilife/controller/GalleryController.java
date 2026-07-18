@@ -45,4 +45,9 @@ public class GalleryController {
                 parentId
         );
     }
+
+    @DeleteMapping("/{galleryId}")
+    public void deleteImage(@PathVariable Long galleryId) {
+        galleryService.deleteImage(galleryId);
+    }
 }
