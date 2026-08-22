@@ -101,4 +101,6 @@ public class EventService {
 
         eventRepository.delete(event);
     }
+
+
 }

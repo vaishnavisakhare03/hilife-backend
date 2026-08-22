@@ -22,8 +22,12 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+    public List<TaskResponse> getAllTasks() {
+
+        return taskRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
     public Task getTaskById(Long id) {
@@ -103,5 +107,22 @@ public class TaskService {
         return taskRepository.save(
                 existingTask
         );
+    }
+
+    private TaskResponse mapToResponse(Task task) {
+
+        List<Gallery> photos =
+                galleryRepository.findByEntityTypeAndParentEntityId(
+                        "TASK",
+                        task.getId()
+                );
+
+        TaskResponse response = new TaskResponse();
+
+        response.setTask(task);
+
+        response.setPhotos(photos);
+
+        return response;
     }
 }

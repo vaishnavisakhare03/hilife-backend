@@ -1,6 +1,7 @@
 package com.example.hilife.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,12 +21,13 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public Task createTask(@RequestBody Task task) {
         return taskService.createTask(task);
     }
 
     @GetMapping
-    public List<Task> getAllTasks() {
+    public List<TaskResponse> getAllTasks() {
         return taskService.getAllTasks();
     }
 
@@ -40,6 +42,7 @@ public class TaskController {
     }
 
     @PostMapping("/{taskId}/photos")
+    @PreAuthorize("hasRole('ADMIN')")
     public String addPhotos(
             @PathVariable Long taskId,
             @RequestBody List<Gallery> photos) {
@@ -49,6 +52,7 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public Task updateTask(
             @PathVariable Long id,
             @RequestBody Task task
@@ -60,6 +64,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public String deleteTask(@PathVariable Long id) {
         taskService.deleteTask(id);
         return "Task deleted successfully";

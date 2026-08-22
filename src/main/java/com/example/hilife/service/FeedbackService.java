@@ -50,13 +50,16 @@ public class FeedbackService {
                 feedback
         );
     }
-    public List<Feedback> getAllFeedback() {
+    public List<FeedbackResponse> getAllFeedback() {
+
         return feedbackRepository.findAll(
-                Sort.by(
-                        Sort.Direction.DESC,
-                        "createdOn"
-                )
-        );
+                        Sort.by(
+                                Sort.Direction.DESC,
+                                "createdOn"
+                        )
+                ).stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
     public Feedback getFeedbackById(Long id) {
@@ -276,5 +279,21 @@ public class FeedbackService {
                 .deleteAllByFeedback_Id(feedbackId);
 
         feedbackRepository.delete(feedback);
+    }
+
+    private FeedbackResponse mapToResponse(Feedback feedback){
+
+        List<Gallery> photos =
+                galleryRepository.findByEntityTypeAndParentEntityId(
+                        "FEEDBACK",
+                        feedback.getId()
+                );
+
+        FeedbackResponse response = new FeedbackResponse();
+
+        response.setFeedback(feedback);
+        response.setPhotos(photos);
+
+        return response;
     }
 }

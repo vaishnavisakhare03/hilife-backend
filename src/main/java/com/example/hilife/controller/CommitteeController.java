@@ -4,6 +4,8 @@ import com.example.hilife.dto.CommitteeRequest;
 import com.example.hilife.dto.CommitteeResponse;
 import com.example.hilife.service.CommitteeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +19,7 @@ public class CommitteeController {
     private final CommitteeService committeeService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public CommitteeResponse createCommitteeMember(
             @RequestBody CommitteeRequest request) {
 
@@ -40,6 +43,7 @@ public class CommitteeController {
     }
 
     @PutMapping("/{committeeId}/photo/{photoId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public CommitteeResponse updatePhoto(
             @PathVariable Long committeeId,
             @PathVariable Long photoId
@@ -50,10 +54,15 @@ public class CommitteeController {
         );
     }
 
+
     @DeleteMapping("/{id}")
-    public void deleteCommitteeMember(
-            @PathVariable Long id) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteCommitteeMember(
+            @PathVariable Long id
+    ) {
 
         committeeService.deleteCommitteeMember(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

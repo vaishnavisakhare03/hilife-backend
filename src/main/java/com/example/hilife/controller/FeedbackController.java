@@ -26,7 +26,7 @@ public class FeedbackController {
     }
 
     @GetMapping
-    public List<Feedback> getAllFeedback() {
+    public List<FeedbackResponse> getAllFeedback() {
         return feedbackService.getAllFeedback();
     }
 

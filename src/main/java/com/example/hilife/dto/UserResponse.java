@@ -1,41 +1,36 @@
-package com.example.hilife.entity;
+package com.example.hilife.dto;
 
-import jakarta.persistence.*;
+import com.example.hilife.entity.Role;
 
-@Entity
-@Table(name = "users")
-public class AppUser {
+public class UserResponse {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String firstName;
     private String middleName;
     private String lastName;
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
-
+    private String phoneNumber;
     private String flatNumber;
     private String tower;
+    private Role role;
+    private String photoUrl;
 
-    @Column(unique = true)
-    private String phoneNumber;
-
-    private String password;
-
-    @ManyToOne
-    @JoinColumn(name = "photo_id")
-    private Gallery photo;
-
-    public Gallery getPhoto(){
-        return photo;
+    public String getPhotoUrl(){
+        return photoUrl;
     }
 
-    public void setPhoto(Gallery photo){
-        this.photo = photo;
+    public void setPhotoUrl(String photoUrl){
+        this.photoUrl = photoUrl;
     }
+    private Long photoId;
+
+    public Long getPhotoId() {
+        return photoId;
+    }
+
+    public void setPhotoId(Long photoId) {
+        this.photoId = photoId;
+    }
+
     public Long getId() {
         return id;
     }
@@ -67,16 +62,13 @@ public class AppUser {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-    public String getName() {
-        return firstName + " " + lastName;
+
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getFlatNumber() {
@@ -95,19 +87,11 @@ public class AppUser {
         this.tower = tower;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public Role getRole() {
+        return role;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

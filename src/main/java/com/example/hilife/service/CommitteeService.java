@@ -21,30 +21,7 @@ public class CommitteeService{
     private final CommitteeRepository committeeRepository;
     private final UserRepository userRepository;
     private final GalleryRepository galleryRepository;
-
-//    public CommitteeResponse createCommitteeMember(CommitteeRequest request) {
-//
-//        AppUser user = userRepository.findById(
-//                        request.getUserId())
-//                .orElseThrow(() ->
-//                        new RuntimeException("User not found"));
-//
-//        Gallery photo = galleryRepository.findById(
-//                        request.getPhotoId())
-//                .orElseThrow(() ->
-//                        new RuntimeException("Photo not found"));
-//
-//        Committee committee = new Committee();
-//
-//        committee.setPosition(request.getPosition());
-//        committee.setUser(user);
-//        committee.setPhoto(photo);
-//
-//        Committee savedCommittee =
-//                committeeRepository.save(committee);
-//
-//        return mapToResponse(savedCommittee);
-//    }
+    private final GalleryService galleryService;
 
     public CommitteeResponse createCommitteeMember(CommitteeRequest request) {
 
@@ -116,7 +93,21 @@ public class CommitteeService{
 
     public void deleteCommitteeMember(Long id) {
 
-        committeeRepository.deleteById(id);
+        Committee member = committeeRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Committee member not found"));
+
+        Long photoId = null;
+
+        if (member.getPhoto() != null) {
+            photoId = member.getPhoto().getId();
+        }
+
+        committeeRepository.delete(member);
+
+        if (photoId != null) {
+            galleryService.deleteImage(photoId);
+        }
     }
 
     private CommitteeResponse mapToResponse(

@@ -1,5 +1,6 @@
 package com.example.hilife.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import com.example.hilife.entity.Gallery;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ public class EventController {
     private final EventService eventService;
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public Event createEvent(@RequestBody Event event) {
         return eventService.createEvent(event);
     }
@@ -35,6 +37,7 @@ public class EventController {
     }
 
     @PostMapping("/{eventId}/photos")
+    @PreAuthorize("hasRole('ADMIN')")
     public String addPhotos(
             @PathVariable Long eventId,
             @RequestBody List<Gallery> photos) {
@@ -49,6 +52,7 @@ public class EventController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public Event updateEvent(
             @PathVariable Long id,
             @RequestBody Event event
@@ -57,6 +61,7 @@ public class EventController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public String deleteEvent(@PathVariable Long id) {
 
         eventService.deleteEvent(id);
