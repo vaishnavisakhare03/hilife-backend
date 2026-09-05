@@ -5,6 +5,7 @@ import com.example.hilife.dto.LoginRequest;
 import com.example.hilife.dto.LoginResponse;
 import com.example.hilife.dto.UserResponse;
 import com.example.hilife.entity.Gallery;
+import com.example.hilife.entity.Role;
 import com.example.hilife.repository.GalleryRepository;
 import com.example.hilife.repository.UserRepository;
 import com.example.hilife.security.JwtUtil;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.hilife.entity.AppUser;
+import com.example.hilife.dto.CreateUserRequest;
 
 import java.util.List;
 
@@ -23,6 +25,39 @@ public class UserService {
     private final JwtUtil jwtUtil;
     private final GalleryRepository galleryRepository;
     private final PasswordEncoder passwordEncoder;
+
+    public AppUser createUser(CreateUserRequest request) {
+
+        if (userRepository.existsByPhoneNumber(
+                request.getPhoneNumber())) {
+
+            throw new RuntimeException(
+                    "Phone number already registered");
+        }
+
+        AppUser user = new AppUser();
+
+        user.setFirstName(request.getFirstName());
+        user.setMiddleName(request.getMiddleName());
+        user.setLastName(request.getLastName());
+
+        user.setPhoneNumber(request.getPhoneNumber());
+
+        user.setFlatNumber(request.getFlatNumber());
+        user.setTower(request.getTower());
+
+        user.setRole(
+                Role.valueOf(request.getRole().toUpperCase())
+        );
+
+        user.setPassword(
+                passwordEncoder.encode(
+                        request.getPassword()
+                )
+        );
+
+        return userRepository.save(user);
+    }
 
     public LoginResponse login(LoginRequest request) {
 

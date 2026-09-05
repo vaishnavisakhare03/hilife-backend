@@ -1,11 +1,9 @@
 package com.example.hilife.controller;
 
-import com.example.hilife.dto.ChangePasswordRequest;
-import com.example.hilife.dto.LoginRequest;
-import com.example.hilife.dto.LoginResponse;
-import com.example.hilife.dto.UserResponse;
+import com.example.hilife.dto.*;
 import com.example.hilife.entity.AppUser;
 import com.example.hilife.service.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +14,14 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public AppUser createUser(
+            @RequestBody CreateUserRequest request) {
+
+        return userService.createUser(request);
+    }
 
     public UserController(UserService userService) {
         this.userService = userService;
