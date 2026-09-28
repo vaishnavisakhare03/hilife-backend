@@ -18,4 +18,5 @@ public class CreateUserRequest {
     private String tower;
 
     private String role;
+    private String registrationToken;
 }

@@ -2,7 +2,10 @@ package com.example.hilife.controller;
 
 import com.example.hilife.dto.*;
 import com.example.hilife.entity.AppUser;
+import com.example.hilife.service.OtpService;
+import com.example.hilife.service.RegistrationTokenService;
 import com.example.hilife.service.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +17,8 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final RegistrationTokenService registrationTokenService;
+    private final OtpService otpService;
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -23,8 +28,19 @@ public class UserController {
         return userService.createUser(request);
     }
 
-    public UserController(UserService userService) {
+    @PostMapping("/register")
+    public AppUser register(@RequestBody CreateUserRequest request) {
+        return userService.registerUser(request);
+    }
+
+    public UserController(
+            UserService userService,
+            OtpService otpService,
+            RegistrationTokenService registrationTokenService
+    ) {
         this.userService = userService;
+        this.otpService = otpService;
+        this.registrationTokenService = registrationTokenService;
     }
 
     @PostMapping("/login")
@@ -56,5 +72,42 @@ public class UserController {
             @RequestBody ChangePasswordRequest request
     ) {
         userService.changePassword(id, request);
+    }
+
+    @PostMapping("/register/send-otp")
+    public ResponseEntity<String> sendRegistrationOtp(
+            @RequestBody SendOtpRequest request) {
+
+        otpService.sendOtp(request.getPhoneNumber());
+
+        return ResponseEntity.ok("OTP sent successfully");
+    }
+
+    @PostMapping("/register/verify-otp")
+    public ResponseEntity<VerifyOtpResponse> verifyRegistrationOtp(
+            @RequestBody VerifyOtpRequest request) {
+
+        boolean verified = otpService.verifyOtp(
+                request.getPhoneNumber(),
+                request.getOtp()
+        );
+
+        if (!verified) {
+            return ResponseEntity.ok(
+                    new VerifyOtpResponse(false, null)
+            );
+        }
+
+        String registrationToken =
+                registrationTokenService.generateToken(
+                        request.getPhoneNumber()
+                );
+
+        return ResponseEntity.ok(
+                new VerifyOtpResponse(
+                        true,
+                        registrationToken
+                )
+        );
     }
 }

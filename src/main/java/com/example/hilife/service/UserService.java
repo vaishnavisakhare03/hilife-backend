@@ -25,6 +25,7 @@ public class UserService {
     private final JwtUtil jwtUtil;
     private final GalleryRepository galleryRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RegistrationTokenService registrationTokenService;
 
     public AppUser createUser(CreateUserRequest request) {
 
@@ -54,6 +55,52 @@ public class UserService {
                 passwordEncoder.encode(
                         request.getPassword()
                 )
+        );
+
+        return userRepository.save(user);
+    }
+
+    public AppUser registerUser(CreateUserRequest request) {
+
+        String verifiedPhone =
+                registrationTokenService.validateToken(
+                        request.getRegistrationToken()
+                );
+
+        if (verifiedPhone == null) {
+            throw new RuntimeException(
+                    "Invalid or expired registration token"
+            );
+        }
+
+        if (!verifiedPhone.equals(request.getPhoneNumber())
+                && !verifiedPhone.equals("+91" + request.getPhoneNumber())) {
+
+            throw new RuntimeException(
+                    "Phone number does not match OTP verification"
+            );
+        }
+
+        if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
+            throw new RuntimeException(
+                    "Phone number already registered"
+            );
+        }
+
+        AppUser user = new AppUser();
+
+        user.setFirstName(request.getFirstName());
+        user.setMiddleName(request.getMiddleName());
+        user.setLastName(request.getLastName());
+        user.setPhoneNumber(request.getPhoneNumber());
+        user.setFlatNumber(request.getFlatNumber());
+        user.setTower(request.getTower());
+
+        // Public registration always creates USER
+        user.setRole(Role.USER);
+
+        user.setPassword(
+                passwordEncoder.encode(request.getPassword())
         );
 
         return userRepository.save(user);
